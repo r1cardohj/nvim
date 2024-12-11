@@ -1,6 +1,5 @@
 vim.cmd("set ai")
 vim.cmd("set signcolumn=yes")
-vim.cmd("set clipboard+=unnamedplus")
 vim.cmd("set encoding=utf-8")
 vim.cmd("set expandtab")
 vim.cmd("set completeopt=longest,menu")
