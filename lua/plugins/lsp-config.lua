@@ -46,6 +46,13 @@ return {
       local lspconfig = require("lspconfig")
       lspconfig.pyright.setup({
         capabilities = capabilities,
+        settings = {
+          python = {
+            analysis = {
+              typeCheckingMode = "off",
+            }
+          }
+        }
       })
       lspconfig.ruff.setup({
         capabilities = capabilities,
