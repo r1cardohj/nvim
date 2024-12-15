@@ -25,6 +25,13 @@ return {
 	},
 	{
 		"hrsh7th/nvim-cmp",
+		version = false,
+		event = "InsertEnter",
+		dependencies = {
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+		},
 		config = function()
 			local cmp = require("cmp")
 			require("luasnip.loaders.from_vscode").lazy_load()
@@ -52,8 +59,8 @@ return {
 					{ name = "pyright" },
 					--{ name = 'vsnip' }, -- For vsnip users.
 					{ name = "lazydev", group_index = 0 }, -- For luasnip users.
-				}, {
 					{ name = "buffer" },
+					{ name = "path" },
 				}),
 			})
 		end,
