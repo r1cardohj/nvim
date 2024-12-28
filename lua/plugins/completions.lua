@@ -31,9 +31,15 @@ return {
 		},
 		config = function()
 			local cmp = require("cmp")
+			local auto_select = true
+      local defaults = require("cmp.config.default")()
 			require("luasnip.loaders.from_vscode").lazy_load()
-
+			vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
 			cmp.setup({
+				completion = {
+					completeopt = "menu,menuone,noinsert" .. (auto_select and "" or ",noselect"),
+				},
+				preselect = auto_select and cmp.PreselectMode.Item or cmp.PreselectMode.None,
 				snippet = {
 					-- REQUIRED - you must specify a snippet engine
 					expand = function(args)
@@ -44,6 +50,13 @@ return {
 					completion = cmp.config.window.bordered(),
 					documentation = cmp.config.window.bordered(),
 				},
+				experimental = {
+					-- only show ghost text when we show ai completions
+					ghost_text = vim.g.ai_cmp and {
+						hl_group = "CmpGhostText",
+					} or false,
+				},
+				sorting = defaults.sorting,
 				mapping = cmp.mapping.preset.insert({
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),

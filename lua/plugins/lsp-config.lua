@@ -10,34 +10,30 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		event = { "BufReadPost", "BufWritePost", "BufNewFile" },
 		opts = {
-			auto_install = true,
+			ensure_installed = { "pyright", "lua_ls" },
 		},
 	},
 	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPost", "BufWritePost", "BufNewFile" },
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local lspconfig = require("lspconfig")
-
-			lspconfig.lua_ls.setup({
-				capabilities = capabilities,
-			})
-			lspconfig.pyright.setup({
-				capabilities = capabilities,
-				settings = {
-					pyright = {
-						disableOrganizeImports = true,
-					},
-					python = {
-						analysis = {
-							typeCheckingMode = "off",
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities
+      })
+      lspconfig.pyright.setup({
+        capabilities = capabilities,
+        settings = {
+						pyright = {
+							disableOrganizeImports = true,
+						},
+						python = {
+							analysis = {
+								typeCheckingMode = "off",
+							},
 						},
 					},
-				},
-			})
-      lspconfig.gopls.setup({
-        capabilities = capabilities,
       })
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "gd", function()
@@ -47,9 +43,9 @@ return {
 			vim.keymap.set("n", "gi", function()
 				require("telescope.builtin").lsp_implementations({ reuse_win = true })
 			end, {})
-      vim.keymap.set("n", "gt", function ()
-        require("telescope.builtin").lsp_type_definitions({ reuse_win = true })
-      end, {})
+			vim.keymap.set("n", "gt", function()
+				require("telescope.builtin").lsp_type_definitions({ reuse_win = true })
+			end, {})
 			vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
 		end,
 	},
