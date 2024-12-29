@@ -71,6 +71,7 @@ return {
 					{ name = "lazydev", group_index = 0 }, -- For luasnip users.
 					{ name = "buffer" },
 					{ name = "path" },
+          { name = "gopls"},
 				}),
 			})
 		end,

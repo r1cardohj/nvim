@@ -35,6 +35,9 @@ return {
 						},
 					},
       })
+      lspconfig.gopls.setup({
+        capabilities = capabilities
+      })
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "gd", function()
 				require("telescope.builtin").lsp_definitions({ reuse_win = true })
