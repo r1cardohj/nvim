@@ -10,6 +10,6 @@ return {
 				floats = "transparent",
 			},
 		})
-		vim.cmd([[colorscheme tokyonight]])
+		vim.cmd([[colorscheme tokyonight-night]])
 	end,
 }
