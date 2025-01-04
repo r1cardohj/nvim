@@ -1,7 +1,11 @@
 return {
 	"nvim-lualine/lualine.nvim",
-  event = { "BufReadPost", "BufWritePost", "BufNewFile"},
+	event = { "BufReadPost", "BufWritePost", "BufNewFile" },
 	config = function()
-    require("darkvoid").setup()
-  end
+		require("lualine").setup({
+			options = {
+				theme = "tokyonight",
+			},
+		})
+	end,
 }

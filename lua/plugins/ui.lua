@@ -126,20 +126,19 @@ return {
 		},
 	},
 	{
-		{
-			"aliqyan-21/darkvoid.nvim",
-			lazy = false,
-			priority = 1000,
-			-- configuration is optional!
-			opts = {
-				-- your settings here
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+    config = function()
+      require("tokyonight").setup({
+        transparent = true,
+        styles = {
+				sidebars = "transparent",
+				floats = "transparent",
 			},
-			config = function()
-				require("darkvoid").setup({
-					transparent = true,
-				})
-				vim.cmd("colorscheme darkvoid")
-			end,
-		},
+      })
+      vim.cmd([[colorscheme tokyonight-night]])
+    end
 	},
 }
