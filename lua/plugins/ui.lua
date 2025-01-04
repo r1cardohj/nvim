@@ -55,19 +55,8 @@ return {
 			bigfile = { enabled = true },
 			dashboard = {
 				preset = {
-					header = [[
-    "          ▀████▀▄▄              ▄█ ",
-    "            █▀    ▀▀▄▄▄▄▄    ▄▄▀▀█ ",
-    "    ▄        █          ▀▀▀▀▄  ▄▀  ",
-    "   ▄▀ ▀▄      ▀▄              ▀▄▀  ",
-    "  ▄▀    █     █▀   ▄█▀▄      ▄█    ",
-    "  ▀▄     ▀▄  █     ▀██▀     ██▄█   ",
-    "   ▀▄    ▄▀ █   ▄██▄   ▄  ▄  ▀▀ █  ",
-    "    █  ▄▀  █    ▀██▀    ▀▀ ▀▀  ▄▀  ",
-    "   █   █  █      ▄▄           ▄▀   ",
-]],
+					enabled = true,
 				},
-				enabled = true,
 			},
 			indent = { enabled = true },
 			input = { enabled = true },
@@ -134,6 +123,23 @@ return {
 				end,
 				desc = "Toggle Terminal",
 			},
+		},
+	},
+	{
+		{
+			"aliqyan-21/darkvoid.nvim",
+			lazy = false,
+			priority = 1000,
+			-- configuration is optional!
+			opts = {
+				-- your settings here
+			},
+			config = function()
+				require("darkvoid").setup({
+					transparent = true,
+				})
+				vim.cmd("colorscheme darkvoid")
+			end,
 		},
 	},
 }
