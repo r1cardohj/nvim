@@ -10,7 +10,7 @@ return {
     "williamboman/mason-lspconfig.nvim",
     event = { "BufReadPost", "BufWritePost", "BufNewFile" },
     opts = {
-      ensure_installed = { "pyright", "lua_ls" },
+      ensure_installed = { "pyright", "lua_ls", "volar", "ts_ls" },
     }
   },
   {
@@ -65,34 +65,23 @@ return {
           end,
         },
       }
-      local mason_registry = require('mason-registry')
-      local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+
+      local vue_ls_path = vim.fn.expand("$MASON/packages/vue-language-server")
+      local vue_plugin_path = vue_ls_path .. "/node_modules/@vue/language-server"
 
 
       lspconfig.ts_ls.setup({
         init_options = {
           plugins = {
             {
-              -- Name of the TypeScript plugin for Vue
-              name = '@vue/typescript-plugin',
-
-              -- Location of the Vue language server module (path defined in step 1)
-              location = vue_language_server_path,
-
-              -- Specify the languages the plugin applies to (in this case, Vue files)
-              languages = { 'vue' },
+              name = "@vue/typescript-plugin",
+              location = vue_plugin_path,
+              languages = { "vue" },
             },
           },
         },
-
-        -- Specify the file types that will trigger the TypeScript language server
-        filetypes = {
-          'typescript',    -- TypeScript files (.ts)
-          'javascript',    -- JavaScript files (.js)
-          'javascriptreact', -- React files with JavaScript (.jsx)
-          'typescriptreact', -- React files with TypeScript (.tsx)
-          'vue'            -- Vue.js single-file components (.vue)
-        },
+        filetypes = { "typescript", "javascript", "vue" },
+        capabilities = capabilities
       })
 
 
