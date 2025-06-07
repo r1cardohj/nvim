@@ -6,4 +6,11 @@ return {
       colorscheme = "gruvbox",
     },
   },
+  {
+    "snacks.nvim",
+    opts = {
+      scroll = { enabled = false },
+      dashboard = {},
+    },
+  },
 }
