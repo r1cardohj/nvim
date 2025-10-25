@@ -1,0 +1,13 @@
+{
+	"suggest.triggerCompletionWait": 250,
+	"pyright.inlayHints.variableTypes": false,
+	"pyright.inlayHints.parameterTypes": false,
+	"pyright.inlayHints.functionReturnTypes": false,
+	"python.formatting.provider": "ruff",
+	"python.linting.ruffEnabled": true,
+	"pyright.organizeimports.provider": "ruff",
+	"python.analysis.typeCheckingMode": "basic",
+	"java.configuration.maven.globalSettings": "/etc/maven/settings.xml",
+	"explorer.icon.enableNerdfont": true,
+	"diagnostic.displayByAle": false
+}

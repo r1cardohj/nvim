@@ -41,6 +41,24 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" },
   {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup({
+        options = {
+          icons_enabled = true,
+          theme = 'auto',
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
+          disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+          },
+        }
+      })
+    end
+  },
+  {
     "neoclide/coc.nvim",
     branch = "release",
     build = "yarn install --frozen-lockfile",
