@@ -9,5 +9,8 @@
 	"python.analysis.typeCheckingMode": "basic",
 	"java.configuration.maven.globalSettings": "/etc/maven/settings.xml",
 	"explorer.icon.enableNerdfont": true,
-	"diagnostic.displayByAle": false
+	"diagnostic.displayByAle": false,
+  "Lua.diagnostics.globals": [
+    "vim"
+  ]
 }
