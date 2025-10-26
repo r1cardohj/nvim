@@ -60,7 +60,7 @@ require("lazy").setup({
       vim.cmd('TSBufToggle highlight')
     end,
   },
-  { "tpope/vim-fugitive" },
+  { "tpope/vim-fugitive", cmd = {"G", "Git"} },
   {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.8',
@@ -83,6 +83,7 @@ require("lazy").setup({
   },
   {
     "nvim-tree/nvim-tree.lua",
+    cmd = { "NvimTreeToggle" },
     config = function()
       require("nvim-tree").setup()
       vim.keymap.set('n', '<leader>e', '<Cmd>NvimTreeToggle<CR>', { silent = true })
@@ -174,6 +175,15 @@ require("lazy").setup({
     "honza/vim-snippets"
   },
   {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+      require('dashboard').setup({
+      })
+    end,
+    dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+  },
+  {
     "fannheyward/telescope-coc.nvim",
     dependencies = {
       "nvim-telescope/telescope.nvim"
@@ -183,9 +193,9 @@ require("lazy").setup({
         extensions = {
           coc = {
             theme = 'ivy',
-            prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+            prefer_locations = true,    -- always use Telescope locations to preview definitions/declarations/implementations etc
             push_cursor_on_edit = true, -- save the cursor position to jump back in the future
-            timeout = 3000,         -- timeout for coc commands
+            timeout = 3000,             -- timeout for coc commands
           }
         },
       })
