@@ -10,6 +10,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 2
+--vim.o.laststatus = 3
 vim.opt.shiftwidth = 2
 vim.opt.smartindent = true
 vim.opt.wrap = false
@@ -49,8 +50,6 @@ require("lazy").setup({
     build = ":TSUpdate",
     config = function()
       require 'nvim-treesitter.configs'.setup {
-        -- 安装 language parser
-        -- :TSInstallInfo 命令查看支持的语言
         ensure_installed = { "c", "lua", "vim", "vimdoc", "python", "go", "gomod", "bash", "javascript" },
         sync_install = false,
         highlight = { enable = true },
@@ -61,15 +60,7 @@ require("lazy").setup({
       vim.cmd('TSBufToggle highlight')
     end,
   },
-  {
-    'akinsho/bufferline.nvim',
-    version = "*",
-    dependencies = 'nvim-tree/nvim-web-devicons',
-    config = function()
-      require("bufferline").setup({})
-    end
-  },
-  {'oneslash/helix-nvim', version = "*"},
+  { "tpope/vim-fugitive" },
   {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
@@ -85,26 +76,22 @@ require("lazy").setup({
     end
   },
   {
-    "L3MON4D3/LuaSnip",
-    dependencies = { "rafamadriz/friendly-snippets" },
+    "windwp/nvim-ts-autotag",
     config = function()
-      require("luasnip.loaders.from_vscode").lazy_load()
-    end
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      require('lualine').setup({
-        options = {
-          icons_enabled = false,
-          theme = 'auto',
-          component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
-          disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-          },
+      require('nvim-ts-autotag').setup({
+        opts = {
+          -- Defaults
+          enable_close = true,          -- Auto close tags
+          enable_rename = true,         -- Auto rename pairs of tags
+          enable_close_on_slash = false -- Auto close on trailing </
+        },
+        -- Also override individual filetype configs, these take priority.
+        -- Empty by default, useful if one of the "opts" global settings
+        -- doesn't work well in a specific filetype
+        per_filetype = {
+          ["html"] = {
+            enable_close = false
+          }
         }
       })
     end
@@ -139,6 +126,42 @@ require("lazy").setup({
     end
   },
   {
+    "MagicDuck/grug-far.nvim",
+    opts = { headerMaxWidth = 80 },
+    cmd = { "GrugFar", "GrugFarWithin" },
+    keys = {
+      {
+        "<leader>sr",
+        function()
+          local grug = require("grug-far")
+          local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
+          grug.open({
+            transient = true,
+            prefills = {
+              filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+            },
+          })
+        end,
+        mode = { "n", "x" },
+        desc = "Search and Replace",
+      },
+    },
+  },
+  {
+    "honza/vim-snippets"
+  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function ()
+      require('lualine').setup({
+        options = {
+          icons_enabled = false
+        }
+      })
+    end
+  },
+  {
     "neoclide/coc.nvim",
     branch = "release",
     build = "yarn install --frozen-lockfile",
@@ -150,28 +173,46 @@ require("lazy").setup({
         'coc-tsserver',
         'coc-pyright',
         'coc-go',
+        'coc-tabnine',
         'coc-rust-analyzer',
         'coc-html',
         'coc-css',
         'coc-snippets',
+        'coc-git'
       }
     end,
     config = function()
       -- Coc.nvim 的键位映射和基本设置
       -- 使用 Tab 进行补全导航
-      function _G.check_back_space()
-        local col = vim.fn.col('.') - 1
-        return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
-      end
 
-      local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
-      vim.keymap.set("i", "<TAB>",
-        'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
-      vim.keymap.set("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
+      -- function _G.check_back_space()
+      --   local col = vim.fn.col('.') - 1
+      --   return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+      -- end
+      --
+      -- local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
+      -- vim.keymap.set("i", "<TAB>",
+      --   'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+      -- vim.keymap.set("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
+      --
+      -- -- 使用tab确认补全
+      -- vim.keymap.set("i", "<tab>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
+      --   opts)
 
-      -- 使用tab确认补全
-      vim.keymap.set("i", "<tab>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
-        opts)
+      vim.cmd([[
+          inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ CheckBackspace() ? "\<TAB>" :
+      \ coc#refresh()
+
+        function! CheckBackspace() abort
+          let col = col('.') - 1
+          return !col || getline('.')[col - 1]  =~# '\s'
+        endfunction
+
+        let g:coc_snippet_next = '<tab>'
+      ]])
 
       -- LSP 相关键位
       vim.keymap.set('n', 'gd', '<Plug>(coc-definition)', { silent = true })
@@ -202,6 +243,14 @@ require("lazy").setup({
       vim.keymap.set("x", "ac", "<Plug>(coc-classobj-a)", opts)
       vim.keymap.set("o", "ac", "<Plug>(coc-classobj-a)", opts)
 
+      -- git
+      vim.keymap.set("n", "[g", "<Plug>(coc-git-prevchunk)", { silent = true })
+      vim.keymap.set("n", "]g", "<Plug>(coc-git-nextchunk)", { silent = true })
+      vim.keymap.set("n", "[c", "<Plug>(coc-git-prevconflict)", { silent = true })
+      vim.keymap.set("n", "]c", "<Plug>(coc-git-nextconflict)", { silent = true })
+      vim.keymap.set("n", "<leader>gs", "<Plug>(coc-git-chunkinfo)", { silent = true })
+      vim.keymap.set("n", "<leader>gc", "<Plug>(coc-git-commit)", { silent = true })
+
       -- scroll float windows
       vim.keymap.set("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
       vim.keymap.set("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
@@ -214,9 +263,12 @@ require("lazy").setup({
 
 
       -- 其他功能
-      vim.keymap.set('n', '<leader>cl', '<Cmd>CocList<CR>', { silent = true })
+      vim.keymap.set('n', '<leader><leader>', '<Cmd>CocList<CR>', { silent = true })
       vim.keymap.set('n', '<leader>d', '<Cmd>CocList diagnostics<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>c', '<Cmd>CocList commands<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>ff', '<Cmd>CocList files<CR>', { silent = true })
+      vim.keymap.set('n', '<C-p>', '<Cmd>CocList files<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>fg', '<Cmd>CocList grep<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>cc', '<Cmd>CocList commands<CR>', { silent = true })
       vim.keymap.set('n', '<leader>o', '<Cmd>CocList outline<CR>', { silent = true })
 
       vim.api.nvim_create_user_command("Format", "call CocAction('format')", {})

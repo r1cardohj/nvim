@@ -1,6 +1,8 @@
 {
 	"suggest.triggerCompletionWait": 250,
   "suggest.virtualText": true,
+  "suggest.enableFloat": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
 	"pyright.inlayHints.variableTypes": false,
 	"pyright.inlayHints.parameterTypes": false,
 	"pyright.inlayHints.functionReturnTypes": false,
