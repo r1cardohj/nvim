@@ -232,6 +232,7 @@ require("lazy").setup({
       vim.keymap.set('n', '[d', '<Plug>(coc-diagnostic-prev)', { silent = true })
       vim.keymap.set('n', ']d', '<Plug>(coc-diagnostic-next)', { silent = true })
 
+      local opts = {silent = true, nowait = true}
       -- text obj
       vim.keymap.set("x", "if", "<Plug>(coc-funcobj-i)", opts)
       vim.keymap.set("o", "if", "<Plug>(coc-funcobj-i)", opts)
@@ -251,6 +252,8 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>gc", "<Plug>(coc-git-commit)", { silent = true })
 
       -- scroll float windows
+      ---@diagnostic disable-next-line: redefined-local
+      local opts = {silent = true, nowait = true, expr = true}
       vim.keymap.set("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
       vim.keymap.set("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
       vim.keymap.set("i", "<C-f>",
