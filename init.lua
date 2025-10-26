@@ -44,9 +44,15 @@ vim.opt.rtp:prepend(lazypath)
 -- 插件列表
 require("lazy").setup({
   {
+    'nvim-mini/mini.indentscope',
+    version = false,
+    config = function()
+      require('mini.indentscope').setup()
+    end
+  },
+  {
     "nvim-treesitter/nvim-treesitter",
-    -- lazy = true,
-    -- event = 'BufRead',
+    --event = {'BufRead', 'BufReadPost', 'BufNewFile'},
     build = ":TSUpdate",
     config = function()
       require 'nvim-treesitter.configs'.setup {
@@ -60,18 +66,20 @@ require("lazy").setup({
       vim.cmd('TSBufToggle highlight')
     end,
   },
-  { "tpope/vim-fugitive", cmd = {"G", "Git"} },
+  { "tpope/vim-fugitive",           cmd = { "G", "Git" } },
   {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.8',
     -- or                              , branch = '0.1.x',
     dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      { '<leader>ff', '<cmd>Telescope find_files<cr>', desc = 'Find Files' },
+      { '<leader>fg', '<cmd>Telescope live_grep<cr>',  desc = 'Live Grep' },
+      { '<leader>fb', '<cmd>Telescope buffers<cr>',    desc = 'Buffers' },
+      { '<leader>fh', '<cmd>Telescope help_tags<cr>',  desc = 'Help Tags' },
+    },
     config = function()
-      local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-      vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+      require('telescope').setup()
     end
   },
   {
@@ -83,7 +91,6 @@ require("lazy").setup({
   },
   {
     "nvim-tree/nvim-tree.lua",
-    cmd = { "NvimTreeToggle" },
     config = function()
       require("nvim-tree").setup()
       vim.keymap.set('n', '<leader>e', '<Cmd>NvimTreeToggle<CR>', { silent = true })
@@ -91,6 +98,7 @@ require("lazy").setup({
   },
   {
     "windwp/nvim-ts-autotag",
+    ft = { "html", "xml", "javascript", "typescript", "jsx", "tsx" },
     config = function()
       require('nvim-ts-autotag').setup({
         opts = {
@@ -227,6 +235,19 @@ require("lazy").setup({
             ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
           },
         },
+        routes = {
+          {
+            filter = {
+              event = "msg_show",
+              any = {
+                { find = "%d+L, %d+B" },
+                { find = "; after #%d+" },
+                { find = "; before #%d+" },
+              },
+            },
+            view = "mini",
+          },
+        },
         -- you can enable a preset for easier configuration
         presets = {
           bottom_search = true,         -- use a classic bottom cmdline for search
@@ -261,20 +282,6 @@ require("lazy").setup({
     config = function()
       -- Coc.nvim 的键位映射和基本设置
       -- 使用 Tab 进行补全导航
-
-      -- function _G.check_back_space()
-      --   local col = vim.fn.col('.') - 1
-      --   return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
-      -- end
-      --
-      -- local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
-      -- vim.keymap.set("i", "<TAB>",
-      --   'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
-      -- vim.keymap.set("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
-      --
-      -- -- 使用tab确认补全
-      -- vim.keymap.set("i", "<tab>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
-      --   opts)
 
       vim.cmd([[
           inoremap <silent><expr> <TAB>
