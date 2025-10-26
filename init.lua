@@ -44,13 +44,6 @@ vim.opt.rtp:prepend(lazypath)
 -- 插件列表
 require("lazy").setup({
   {
-    'nvim-mini/mini.indentscope',
-    version = false,
-    config = function()
-      require('mini.indentscope').setup()
-    end
-  },
-  {
     "nvim-treesitter/nvim-treesitter",
     --event = {'BufRead', 'BufReadPost', 'BufNewFile'},
     build = ":TSUpdate",
@@ -306,7 +299,6 @@ require("lazy").setup({
       vim.keymap.set('n', 'gr', '<Cmd>Telescope coc references<CR>', { silent = true })
       vim.keymap.set('n', 'gi', '<Cmd>Telescope coc implementations<CR>', { silent = true })
       vim.keymap.set('n', 'gt', '<Cmd>Telescope coc type_definitions<CR>', { silent = true })
-
       -- 代码操作
       vim.keymap.set('n', '<leader>rn', '<Plug>(coc-rename)', { silent = true })
       vim.keymap.set('n', '<leader>ca', '<Plug>(coc-codeaction)', { silent = true })
