@@ -59,6 +59,11 @@ require("lazy").setup({
       vim.cmd('TSBufToggle highlight')
     end,
   },
+  {
+    "benomahony/oil-git.nvim",
+    dependencies = { "stevearc/oil.nvim" },
+    -- No opts or config needed! Works automatically
+  },
   { "tpope/vim-fugitive",           cmd = { "G", "Git" } },
   {
     'nvim-telescope/telescope.nvim',
@@ -81,13 +86,6 @@ require("lazy").setup({
     config = true
     -- use opts = {} for passing setup options
     -- this is equivalent to setup({}) function
-  },
-  {
-    "nvim-tree/nvim-tree.lua",
-    config = function()
-      require("nvim-tree").setup()
-      vim.keymap.set('n', '<leader>e', '<Cmd>NvimTreeToggle<CR>', { silent = true })
-    end
   },
   {
     "windwp/nvim-ts-autotag",
@@ -147,7 +145,29 @@ require("lazy").setup({
     opts = {},
     lazy = false,
     config = function()
-      require("oil").setup()
+      require("oil").setup({
+        float = {
+          -- Padding around the floating window
+          padding = 2,
+          -- max_width and max_height can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
+          max_width = 0.5,
+          max_height = 0.5,
+          border = nil,
+          win_options = {
+            winblend = 0,
+          },
+          -- optionally override the oil buffers window title with custom function: fun(winid: integer): string
+          get_win_title = nil,
+          -- preview_split: Split direction: "auto", "left", "right", "above", "below".
+          preview_split = "auto",
+          -- This is the config that will be passed to nvim_open_win.
+          -- Change values here to customize the layout
+          override = function(conf)
+            return conf
+          end,
+        },
+      })
+      vim.keymap.set("n", "<leader>e", "<cmd>Oil --float <cr>", { desc = "Open Oil File Explorer" })
     end
   },
   {
@@ -174,15 +194,6 @@ require("lazy").setup({
   },
   {
     "honza/vim-snippets"
-  },
-  {
-    'nvimdev/dashboard-nvim',
-    event = 'VimEnter',
-    config = function()
-      require('dashboard').setup({
-      })
-    end,
-    dependencies = { { 'nvim-tree/nvim-web-devicons' } }
   },
   {
     "fannheyward/telescope-coc.nvim",
