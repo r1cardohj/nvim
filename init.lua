@@ -22,6 +22,9 @@ vim.opt.scrolloff = 8
 vim.opt.pumheight = 10
 vim.opt.signcolumn = "yes"
 vim.opt.updatetime = 300 -- 这会影响 Coc 的响应速度
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 
 -- 安装 lazy.nvim (如果尚未安装)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -39,14 +42,62 @@ vim.opt.rtp:prepend(lazypath)
 
 -- 插件列表
 require("lazy").setup({
-  { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    -- lazy = true,
+    -- event = 'BufRead',
+    build = ":TSUpdate",
+    config = function()
+      require 'nvim-treesitter.configs'.setup {
+        -- 安装 language parser
+        -- :TSInstallInfo 命令查看支持的语言
+        ensure_installed = { "c", "lua", "vim", "vimdoc", "python", "go", "gomod", "bash", "javascript" },
+        sync_install = false,
+        highlight = { enable = true },
+        indent = { enable = true },
+      }
+
+      -- run TSBufToggle highlight
+      vim.cmd('TSBufToggle highlight')
+    end,
+  },
+  {
+    'akinsho/bufferline.nvim',
+    version = "*",
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    config = function()
+      require("bufferline").setup({})
+    end
+  },
+  {'oneslash/helix-nvim', version = "*"},
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equivalent to setup({}) function
+  },
+  {
+    "nvim-tree/nvim-tree.lua",
+    config = function()
+      require("nvim-tree").setup()
+      vim.keymap.set('n', '<leader>e', '<Cmd>NvimTreeToggle<CR>', { silent = true })
+    end
+  },
+  {
+    "L3MON4D3/LuaSnip",
+    dependencies = { "rafamadriz/friendly-snippets" },
+    config = function()
+      require("luasnip.loaders.from_vscode").lazy_load()
+    end
+  },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('lualine').setup({
         options = {
-          icons_enabled = true,
+          icons_enabled = false,
           theme = 'auto',
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
@@ -56,6 +107,35 @@ require("lazy").setup({
           },
         }
       })
+    end
+  },
+  { "blazkowolf/gruber-darker.nvim" },
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
+  },
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    lazy = false,
+    config = function()
+      require("oil").setup()
     end
   },
   {
@@ -98,7 +178,6 @@ require("lazy").setup({
       vim.keymap.set('n', 'gy', '<Plug>(coc-type-definition)', { silent = true })
       vim.keymap.set('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
       vim.keymap.set('n', 'gr', '<Plug>(coc-references)', { silent = true })
-      vim.keymap.set('n', 'K', '<Plug>(coc-do-hover)', { silent = true })
 
       -- 代码操作
       vim.keymap.set('n', '<leader>rn', '<Plug>(coc-rename)', { silent = true })
@@ -106,8 +185,8 @@ require("lazy").setup({
       vim.keymap.set('x', '<leader>ca', '<Plug>(coc-codeaction-selected)', { silent = true })
 
       -- 格式化
-      vim.keymap.set('n', '<leader>f', '<Plug>(coc-format)', { silent = true })
-      vim.keymap.set('x', '<leader>f', '<Plug>(coc-format-selected)', { silent = true })
+      vim.keymap.set('n', '<leader>F', '<Plug>(coc-format)', { silent = true })
+      vim.keymap.set('x', '<leader>F', '<Plug>(coc-format-selected)', { silent = true })
 
       -- 诊断导航
       vim.keymap.set('n', '[d', '<Plug>(coc-diagnostic-prev)', { silent = true })
@@ -137,7 +216,6 @@ require("lazy").setup({
       -- 其他功能
       vim.keymap.set('n', '<leader>cl', '<Cmd>CocList<CR>', { silent = true })
       vim.keymap.set('n', '<leader>d', '<Cmd>CocList diagnostics<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>e', '<Cmd>CocList extensions<CR>', { silent = true })
       vim.keymap.set('n', '<leader>c', '<Cmd>CocList commands<CR>', { silent = true })
       vim.keymap.set('n', '<leader>o', '<Cmd>CocList outline<CR>', { silent = true })
 
@@ -168,7 +246,7 @@ require("lazy").setup({
         command = "silent call CocActionAsync('highlight')",
         desc = "Highlight symbol under cursor on CursorHold"
       })
-      vim.keymap.set("n", "<leader>h", '<CMD>lua _G.show_docs()<CR>', { silent = true })
+      vim.keymap.set("n", "K", '<CMD>lua _G.show_docs()<CR>', { silent = true })
     end,
   }
 }, {
@@ -178,11 +256,4 @@ require("lazy").setup({
 })
 
 -- 颜色方案
-vim.cmd.colorscheme("habamax")
-
--- 自定义键位
-vim.keymap.set('n', '<leader>w', '<cmd>w<CR>')
-vim.keymap.set('n', '<leader>q', '<cmd>q<CR>')
-vim.keymap.set('n', '<leader>Q', '<cmd>qa!<CR>')
-
-print("coc.nvim 配置加载完成！使用 :Lazy 管理插件")
+vim.cmd.colorscheme("gruber-darker")
