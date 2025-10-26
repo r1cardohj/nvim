@@ -98,6 +98,16 @@ require("lazy").setup({
   },
   { "blazkowolf/gruber-darker.nvim" },
   {
+    'nvim-lualine/lualine.nvim',
+    config = function()
+      require('lualine').setup({
+        options = {
+          icons_enabled = false,
+        }
+      })
+    end
+  },
+  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
@@ -149,17 +159,6 @@ require("lazy").setup({
   },
   {
     "honza/vim-snippets"
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function ()
-      require('lualine').setup({
-        options = {
-          icons_enabled = false
-        }
-      })
-    end
   },
   {
     "neoclide/coc.nvim",
@@ -265,8 +264,8 @@ require("lazy").setup({
       -- 其他功能
       vim.keymap.set('n', '<leader><leader>', '<Cmd>CocList<CR>', { silent = true })
       vim.keymap.set('n', '<leader>d', '<Cmd>CocList diagnostics<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>ff', '<Cmd>CocList files<CR>', { silent = true })
       vim.keymap.set('n', '<C-p>', '<Cmd>CocList files<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>ff', '<Cmd>CocList files<CR>', { silent = true })
       vim.keymap.set('n', '<leader>fg', '<Cmd>CocList grep<CR>', { silent = true })
       vim.keymap.set('n', '<leader>cc', '<Cmd>CocList commands<CR>', { silent = true })
       vim.keymap.set('n', '<leader>o', '<Cmd>CocList outline<CR>', { silent = true })
