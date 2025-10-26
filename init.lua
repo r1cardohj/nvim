@@ -62,6 +62,19 @@ require("lazy").setup({
   },
   { "tpope/vim-fugitive" },
   {
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.8',
+    -- or                              , branch = '0.1.x',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local builtin = require('telescope.builtin')
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+      vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+    end
+  },
+  {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     config = true
@@ -161,6 +174,61 @@ require("lazy").setup({
     "honza/vim-snippets"
   },
   {
+    "fannheyward/telescope-coc.nvim",
+    dependencies = {
+      "nvim-telescope/telescope.nvim"
+    },
+    config = function()
+      require("telescope").setup({
+        extensions = {
+          coc = {
+            theme = 'ivy',
+            prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+            push_cursor_on_edit = true, -- save the cursor position to jump back in the future
+            timeout = 3000,         -- timeout for coc commands
+          }
+        },
+      })
+      require('telescope').load_extension('coc')
+    end
+  },
+  -- lazy.nvim
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    },
+    config = function()
+      require("noice").setup({
+        lsp = {
+          -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+          override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+          },
+        },
+        -- you can enable a preset for easier configuration
+        presets = {
+          bottom_search = true,         -- use a classic bottom cmdline for search
+          command_palette = true,       -- position the cmdline and popupmenu together
+          long_message_to_split = true, -- long messages will be sent to a split
+          inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+          lsp_doc_border = false,       -- add a border to hover docs and signature help
+        },
+      })
+    end
+  },
+  {
     "neoclide/coc.nvim",
     branch = "release",
     build = "yarn install --frozen-lockfile",
@@ -215,9 +283,12 @@ require("lazy").setup({
 
       -- LSP 相关键位
       vim.keymap.set('n', 'gd', '<Plug>(coc-definition)', { silent = true })
-      vim.keymap.set('n', 'gy', '<Plug>(coc-type-definition)', { silent = true })
-      vim.keymap.set('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
-      vim.keymap.set('n', 'gr', '<Plug>(coc-references)', { silent = true })
+      -- vim.keymap.set('n', 'gy', '<Plug>(coc-type-definition)', { silent = true })
+      -- vim.keymap.set('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
+      -- vim.keymap.set('n', 'gr', '<Plug>(coc-references)', { silent = true })
+      vim.keymap.set('n', 'gr', '<Cmd>Telescope coc references<CR>', { silent = true })
+      vim.keymap.set('n', 'gi', '<Cmd>Telescope coc implementations<CR>', { silent = true })
+      vim.keymap.set('n', 'gt', '<Cmd>Telescope coc type_definitions<CR>', { silent = true })
 
       -- 代码操作
       vim.keymap.set('n', '<leader>rn', '<Plug>(coc-rename)', { silent = true })
@@ -232,7 +303,7 @@ require("lazy").setup({
       vim.keymap.set('n', '[d', '<Plug>(coc-diagnostic-prev)', { silent = true })
       vim.keymap.set('n', ']d', '<Plug>(coc-diagnostic-next)', { silent = true })
 
-      local opts = {silent = true, nowait = true}
+      local opts = { silent = true, nowait = true }
       -- text obj
       vim.keymap.set("x", "if", "<Plug>(coc-funcobj-i)", opts)
       vim.keymap.set("o", "if", "<Plug>(coc-funcobj-i)", opts)
@@ -253,7 +324,7 @@ require("lazy").setup({
 
       -- scroll float windows
       ---@diagnostic disable-next-line: redefined-local
-      local opts = {silent = true, nowait = true, expr = true}
+      local opts = { silent = true, nowait = true, expr = true }
       vim.keymap.set("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
       vim.keymap.set("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
       vim.keymap.set("i", "<C-f>",
@@ -265,13 +336,15 @@ require("lazy").setup({
 
 
       -- 其他功能
-      vim.keymap.set('n', '<leader><leader>', '<Cmd>CocList<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>d', '<Cmd>CocList diagnostics<CR>', { silent = true })
-      vim.keymap.set('n', '<C-p>', '<Cmd>CocList files<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>ff', '<Cmd>CocList files<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>fg', '<Cmd>CocList grep<CR>', { silent = true })
-      vim.keymap.set('n', '<leader>cc', '<Cmd>CocList commands<CR>', { silent = true })
+      vim.keymap.set('n', '<leader><leader>', '<Cmd>Telescope coc<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>d', '<Cmd>Telescope coc diagnostics<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>cc', '<Cmd>Telescope coc commands<CR>', { silent = true })
+      vim.keymap.set('n', "<leader>fm", '<Cmd>Telescope coc mru<CR>', { silent = true })
+      vim.keymap.set('n', "<leader>fl", '<Cmd>Telescope coc links<CR>', { silent = true })
       vim.keymap.set('n', '<leader>o', '<Cmd>CocList outline<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>fs', '<Cmd>Telescope coc document_symbols<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>fws', '<Cmd>Telescope coc workspace_symbols<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>fwd', '<Cmd>Telescope coc workspace_diagnostics<CR>', { silent = true })
 
       vim.api.nvim_create_user_command("Format", "call CocAction('format')", {})
 
