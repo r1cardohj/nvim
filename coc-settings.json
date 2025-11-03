@@ -11,9 +11,10 @@
 	"pyright.organizeimports.provider": "ruff",
 	"python.analysis.typeCheckingMode": "basic",
 	"java.configuration.maven.globalSettings": "/etc/maven/settings.xml",
-	"explorer.icon.enableNerdfont": true,
+	"explorer.icon.enableNerdfont": false,
 	"diagnostic.displayByAle": false,
   "Lua.diagnostics.globals": [
     "vim"
-  ]
+  ],
+  "snippets.ultisnips.pythonPrompt": false
 }

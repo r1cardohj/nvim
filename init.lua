@@ -111,16 +111,6 @@ require("lazy").setup({
   },
   { "blazkowolf/gruber-darker.nvim" },
   {
-    'nvim-lualine/lualine.nvim',
-    config = function()
-      require('lualine').setup({
-        options = {
-          icons_enabled = false,
-        }
-      })
-    end
-  },
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
@@ -275,11 +265,11 @@ require("lazy").setup({
         'coc-tsserver',
         'coc-pyright',
         'coc-go',
+        'coc-snippets',
         'coc-tabnine',
         'coc-rust-analyzer',
         'coc-html',
         'coc-css',
-        'coc-snippets',
         'coc-git'
       }
     end,
